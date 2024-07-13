@@ -26,8 +26,8 @@ end
 -- Find the player by name or ID
 local player = game.Players:FindFirstChild(playerName)
 if player then
-    -- Give the player 1000 cash (adjust amount as needed)
-    giveCash(player, 100000)
+    -- Give the player 2000 cash (adjust amount as needed)
+    giveCash(player, 2000)
 else
     print("Player not found.")
 end
