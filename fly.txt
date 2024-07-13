@@ -1,0 +1,94 @@
+-- Variables
+local flySpeed = 250 -- Adjust this value to change the fly speed
+
+-- UI Setup
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui")
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 150, 0, 120)
+frame.Position = UDim2.new(0, 20, 0, 20)
+frame.BackgroundColor3 = Color3.new(0, 0, 0)
+frame.BackgroundTransparency = 0.5
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Fly Script"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.FredokaOne
+title.TextSize = 18
+title.BackgroundTransparency = 1
+title.Parent = frame
+
+local flyButton = Instance.new("TextButton")
+flyButton.Size = UDim2.new(0, 120, 0, 30)
+flyButton.Position = UDim2.new(0.5, -60, 0, 40)
+flyButton.AnchorPoint = Vector2.new(0.5, 0)
+flyButton.Text = "Toggle Fly"
+flyButton.TextColor3 = Color3.new(1, 1, 1)
+flyButton.Font = Enum.Font.FredokaOne
+flyButton.TextSize = 16
+flyButton.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+flyButton.BorderSizePixel = 0
+flyButton.Parent = frame
+
+-- Fly Functionality
+local flyEnabled = false
+
+flyButton.MouseButton1Click:Connect(function()
+    flyEnabled = not flyEnabled
+    if flyEnabled then
+        flyButton.Text = "Flying On"
+        fly()
+    else
+        flyButton.Text = "Toggle Fly"
+        stopFlying()
+    end
+end)
+
+function fly()
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+
+    local humanoid = character.Humanoid
+    humanoid.PlatformStand = true
+    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+    humanoid.AutoRotate = false
+
+    local hrp = character.HumanoidRootPart
+    local flySpeed = flySpeed
+
+    local function update()
+        if not hrp or not hrp.Parent then
+            return
+        end
+        local moveVector = Vector3.new(0, 1, 0) * flySpeed
+        hrp.Velocity = moveVector
+    end
+
+    update()
+    game:GetService("RunService").Stepped:Connect(update)
+end
+
+function stopFlying()
+    local character = player.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then
+        return
+    end
+
+    local humanoid = character.Humanoid
+    humanoid.PlatformStand = false
+    humanoid.AutoRotate = true
+    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+
+    local hrp = character.HumanoidRootPart
+    if hrp then
+        hrp.Velocity = Vector3.new(0, 0, 0)
+    end
+end
