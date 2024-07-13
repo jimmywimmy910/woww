@@ -1,113 +1,52 @@
--- Variables
 local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
-local noclipActivated = false
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 
--- UI Setup
+local noclipEnabled = false
+
+local function toggleNoclip()
+    noclipEnabled = not noclipEnabled
+    
+    -- Disable collisions for each part of the character
+    for _, part in ipairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = not noclipEnabled
+        end
+    end
+    
+    -- Disable collisions for the character's humanoid root part
+    character:WaitForChild("HumanoidRootPart").CanCollide = not noclipEnabled
+    
+    -- Print noclip state (optional)
+    print("Noclip enabled:", noclipEnabled)
+end
+
+-- Create GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "NoclipScriptGUI"
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.Parent = player.PlayerGui
+gui.Parent = game.Players.LocalPlayer.PlayerGui
 
--- Styling Constants
-local backgroundColor = Color3.fromRGB(25, 25, 30)
-local frameColor = Color3.fromRGB(80, 0, 120)
-local buttonColor = Color3.fromRGB(100, 0, 160)
-local textColor = Color3.fromRGB(255, 255, 255)
-
-local frameSize = UDim2.new(0, 180, 0, 180)
-local buttonSize = UDim2.new(0, 160, 0, 40)
-local buttonOffset = UDim2.new(0.5, -80, 0, 120)
-local creditTextSize = UDim2.new(0, 160, 0, 20)
-local creditTextPosition = UDim2.new(0, 0, 0, 160)
-
--- Frame Creation
 local frame = Instance.new("Frame")
-frame.Size = frameSize
-frame.Position = UDim2.new(0, 20, 0, 20)
-frame.BackgroundColor3 = backgroundColor
+frame.Size = UDim2.new(0, 200, 0, 50)
+frame.Position = UDim2.new(0, 10, 0, 10)
+frame.BackgroundColor3 = Color3.fromRGB(36, 36, 36) -- Dark theme background color
 frame.BorderSizePixel = 2
-frame.BorderColor3 = textColor
-frame.Active = true -- Make frame draggable
+frame.BorderColor3 = Color3.fromRGB(65, 105, 225) -- Neon outline color
+frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
 
--- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "Noclip Script"
-title.TextColor3 = textColor
-title.Font = Enum.Font.FredokaOne
-title.TextSize = 18
-title.BackgroundTransparency = 1
-title.Parent = frame
+local flyButton = Instance.new("TextButton")
+flyButton.Text = "Toggle Noclip"
+flyButton.Size = UDim2.new(0, 180, 0, 40)
+flyButton.Position = UDim2.new(0, 10, 0, 5)
+flyButton.BackgroundColor3 = Color3.fromRGB(65, 105, 225) -- Neon button color
+flyButton.TextColor3 = Color3.new(1, 1, 1) -- White text color
+flyButton.Font = Enum.Font.SourceSans
+flyButton.TextSize = 20
+flyButton.BorderSizePixel = 2
+flyButton.BorderColor3 = Color3.fromRGB(65, 105, 225) -- Neon outline color
+flyButton.Parent = frame
 
--- Noclip Button
-local noclipButton = Instance.new("TextButton")
-noclipButton.Size = buttonSize
-noclipButton.Position = buttonOffset
-noclipButton.AnchorPoint = Vector2.new(0.5, 0)
-noclipButton.Text = "Toggle Noclip"
-noclipButton.TextColor3 = textColor
-noclipButton.Font = Enum.Font.FredokaOne
-noclipButton.TextSize = 16
-noclipButton.BackgroundColor3 = buttonColor
-noclipButton.BorderSizePixel = 0
-noclipButton.Parent = frame
-
--- Credit Text
-local creditText = Instance.new("TextLabel")
-creditText.Size = creditTextSize
-creditText.Position = creditTextPosition
-creditText.Text = "Jimmy made this"
-creditText.TextColor3 = textColor
-creditText.Font = Enum.Font.FredokaOne
-creditText.TextSize = 12
-creditText.BackgroundTransparency = 1
-creditText.TextXAlignment = Enum.TextXAlignment.Center
-creditText.Parent = frame
-
--- Functionality
-noclipButton.MouseButton1Click:Connect(function()
-    noclipActivated = not noclipActivated
-    if noclipActivated then
-        noclipButton.Text = "Noclip On"
-        startNoclip()
-    else
-        noclipButton.Text = "Toggle Noclip"
-        stopNoclip()
-    end
+flyButton.MouseButton1Click:Connect(function()
+    toggleNoclip()
 end)
-
-local function startNoclip()
-    player.CharacterAdded:Connect(function(character)
-        local humanoid = character:WaitForChild("Humanoid")
-        local rootPart = character:WaitForChild("HumanoidRootPart")
-        
-        humanoid.Died:Connect(function()
-            stopNoclip()
-        end)
-
-        local function updateNoclip()
-            while noclipActivated and humanoid and rootPart and character.Parent == game.Players do
-                humanoid.PlatformStand = true
-                humanoid:Move(Vector3.new())
-                rootPart.CFrame = mouse.Hit + Vector3.new(0, 3, 0)
-                wait()
-            end
-        end
-
-        updateNoclip()
-    end)
-end
-
-local function stopNoclip()
-    local character = player.Character
-    if character then
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.PlatformStand = false
-        end
-    end
-end
