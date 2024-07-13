@@ -1,160 +1,34 @@
--- Instances:
-local FlyGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local TextButton = Instance.new("TextButton")
-local TextLabel = Instance.new("TextLabel")
+-- Example script to give cash to a player using a custom executor
 
--- Properties:
-FlyGui.Name = "FlyGui"
-FlyGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- Replace with the player's username or user ID you want to give cash to
+local playerName = "stopbeatingmeup197"  -- Replace with the player's name or ID
 
-Frame.Parent = FlyGui
-Frame.BackgroundColor3 = Color3.fromRGB(30, 0, 60) -- Dark purple background
-Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.0685602352, 0, 0.168769717, 0)
-Frame.Size = UDim2.new(0.264544547, 0, 0.100000024, 0)
-
-TextButton.Parent = Frame
-TextButton.BackgroundColor3 = Color3.fromRGB(100, 0, 200) -- Neon purple button
-TextButton.BorderSizePixel = 0
-TextButton.Position = UDim2.new(0.06324628, 0, 0.400667697, 0)
-TextButton.Size = UDim2.new(0.871157169, 0, 0.495614201, 0)
-TextButton.Font = Enum.Font.ArialBold
-TextButton.Text = "Fly"
-TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-TextButton.TextScaled = true
-TextButton.TextSize = 14.000
-TextButton.TextStrokeTransparency = 0.000
-TextButton.TextWrapped = true
-
-TextLabel.Parent = Frame
-TextLabel.BackgroundColor3 = Color3.fromRGB(30, 0, 60) -- Dark purple background for consistency
-TextLabel.Size = UDim2.new(0, 180, 0, 24)
-TextLabel.Position = UDim2.new(0, 0, 0.8, 0)
-TextLabel.Font = Enum.Font.Oswald
-TextLabel.Text = "Made by Basement Studios" -- Updated credits
-TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
-TextLabel.TextScaled = true
-TextLabel.TextSize = 14.000
-TextLabel.TextWrapped = true
-
--- Variables:
-local player = game.Players.LocalPlayer
-local mouse = player:GetMouse()
-local flying = false
-local speed = 50
-local isR15 = false
-
--- Functions:
-local function getRootPart(character)
-    if isR15 then
-        return character.HumanoidRootPart
-    else
-        return character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Torso")
+-- Function to give cash to a player
+local function giveCash(player, amount)
+    -- Check if player and player's leaderstats exist
+    local leaderstats = player:FindFirstChild("leaderstats")
+    if leaderstats then
+        -- Check if Cash value exists in leaderstats
+        local cash = leaderstats:FindFirstChild("Cash")
+        if cash then
+            -- Add amount to Cash value
+            cash.Value = cash.Value + amount
+        else
+            -- Create Cash value if it doesn't exist
+            cash = Instance.new("IntValue")
+            cash.Name = "Cash"
+            cash.Value = amount
+            cash.Parent = leaderstats
+        end
     end
 end
 
-local function setupCharacter()
-    local character = player.Character or player.CharacterAdded:Wait()
-    isR15 = character.Humanoid.RigType == Enum.HumanoidRigType.R15
+-- Find the player by name or ID
+local player = game.Players:FindFirstChild(playerName)
+if player then
+    -- Give the player 100000 cash (adjust amount as needed)
+    giveCash(player, 1000)
+else
+    print("Player not found.")
 end
 
-local function startFlying()
-    local character = player.Character
-    if not character then return end
-    
-    local rootPart = getRootPart(character)
-    if not rootPart then return end
-    
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.PlatformStand = true
-    
-    local bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.Parent = rootPart
-    bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bodyGyro.CFrame = rootPart.CFrame
-    
-    local bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.Parent = rootPart
-    bodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    
-    mouse.KeyDown:Connect(function(key)
-        if key:lower() == "e" then
-            flying = not flying
-            if flying then
-                bodyGyro.CFrame = rootPart.CFrame
-                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-                bodyVelocity.Velocity = Vector3.new(0, 0.1, 0)
-                fly()
-            else
-                bodyGyro:Destroy()
-                bodyVelocity:Destroy()
-                humanoid.PlatformStand = false
-            end
-        end
-    end)
-    
-    mouse.KeyUp:Connect(function(key)
-        if key:lower() == "e" then
-            flying = false
-            bodyGyro:Destroy()
-            bodyVelocity:Destroy()
-            humanoid.PlatformStand = false
-        end
-    end)
-    
-    mouse.Move:Connect(function()
-        if flying then
-            bodyGyro.CFrame = CFrame.new(rootPart.Position, rootPart.Position + Vector3.new(0, -1, 0))
-        end
-    end)
-end
-
--- Main:
-setupCharacter()
-
-TextButton.MouseButton1Click:Connect(function()
-    flying = not flying
-    if flying then
-        TextButton.Text = "Stop Flying"
-        startFlying()
-    else
-        TextButton.Text = "Fly"
-    end
-end)
-
--- Draggable GUI:
-local UserInputService = game:GetService("UserInputService")
-
-local gui = Frame
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-gui.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = gui.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-gui.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
