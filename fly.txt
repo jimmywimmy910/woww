@@ -1,11 +1,12 @@
 -- Variables
-local flySpeed = 50 -- Adjust this value to change the fly speed
-
--- UI Setup
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
+local noclipActivated = false
+
+-- UI Setup
 local gui = Instance.new("ScreenGui")
-gui.Name = "FlyScriptGUI"
+gui.Name = "NoclipScriptGUI"
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.Parent = player.PlayerGui
 
 -- Styling Constants
@@ -35,25 +36,25 @@ frame.Parent = gui
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "Fly Script"
+title.Text = "Noclip Script"
 title.TextColor3 = textColor
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 18
 title.BackgroundTransparency = 1
 title.Parent = frame
 
--- Fly Button
-local flyButton = Instance.new("TextButton")
-flyButton.Size = buttonSize
-flyButton.Position = buttonOffset
-flyButton.AnchorPoint = Vector2.new(0.5, 0)
-flyButton.Text = "Toggle Fly"
-flyButton.TextColor3 = textColor
-flyButton.Font = Enum.Font.FredokaOne
-flyButton.TextSize = 16
-flyButton.BackgroundColor3 = buttonColor
-flyButton.BorderSizePixel = 0
-flyButton.Parent = frame
+-- Noclip Button
+local noclipButton = Instance.new("TextButton")
+noclipButton.Size = buttonSize
+noclipButton.Position = buttonOffset
+noclipButton.AnchorPoint = Vector2.new(0.5, 0)
+noclipButton.Text = "Toggle Noclip"
+noclipButton.TextColor3 = textColor
+noclipButton.Font = Enum.Font.FredokaOne
+noclipButton.TextSize = 16
+noclipButton.BackgroundColor3 = buttonColor
+noclipButton.BorderSizePixel = 0
+noclipButton.Parent = frame
 
 -- Credit Text
 local creditText = Instance.new("TextLabel")
@@ -68,72 +69,45 @@ creditText.TextXAlignment = Enum.TextXAlignment.Center
 creditText.Parent = frame
 
 -- Functionality
-local flyEnabled = false
-
-flyButton.MouseButton1Click:Connect(function()
-    flyEnabled = not flyEnabled
-    if flyEnabled then
-        flyButton.Text = "Flying On"
-        startFlying()
+noclipButton.MouseButton1Click:Connect(function()
+    noclipActivated = not noclipActivated
+    if noclipActivated then
+        noclipButton.Text = "Noclip On"
+        startNoclip()
     else
-        flyButton.Text = "Toggle Fly"
-        stopFlying()
+        noclipButton.Text = "Toggle Noclip"
+        stopNoclip()
     end
 end)
 
-local function startFlying()
-    local character = player.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then
-        return
-    end
+local function startNoclip()
+    player.CharacterAdded:Connect(function(character)
+        local humanoid = character:WaitForChild("Humanoid")
+        local rootPart = character:WaitForChild("HumanoidRootPart")
+        
+        humanoid.Died:Connect(function()
+            stopNoclip()
+        end)
 
-    local humanoid = character.Humanoid
-    humanoid.PlatformStand = true
-    humanoid.AutoRotate = false
-
-    local hrp = character.HumanoidRootPart
-
-    local function flyUpdate()
-        local moveVector = Vector3.new(0, 0, 0)
-        local speed = flySpeed
-
-        if hrp then
-            -- Calculate movement vector based on user input
-            local forwardVector = (mouse.Target.Position - hrp.Position).unit
-            local rightVector = hrp.CFrame.RightVector
-
-            -- Calculate velocity based on input direction
-            moveVector = (forwardVector * speed) + (rightVector * speed * 0.5)
+        local function updateNoclip()
+            while noclipActivated and humanoid and rootPart and character.Parent == game.Players do
+                humanoid.PlatformStand = true
+                humanoid:Move(Vector3.new())
+                rootPart.CFrame = mouse.Hit + Vector3.new(0, 3, 0)
+                wait()
+            end
         end
 
-        hrp.Velocity = moveVector
-    end
-
-    -- Connect flyUpdate to UserInputService for smoother control
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            flyUpdate()
-        end
+        updateNoclip()
     end)
-
-    -- Initial call to flyUpdate
-    flyUpdate()
 end
 
-local function stopFlying()
+local function stopNoclip()
     local character = player.Character
-    if not character or not character:FindFirstChild("HumanoidRootPart") then
-        return
-    end
-
-    local humanoid = character.Humanoid
-    humanoid.PlatformStand = false
-    humanoid.AutoRotate = true
-
-    local hrp = character.HumanoidRootPart
-    if hrp then
-        hrp.Velocity = Vector3.new(0, 0, 0)
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.PlatformStand = false
+        end
     end
 end
-
-
