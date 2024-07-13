@@ -1,137 +1,85 @@
-local Workspace = game:GetService("Workspace")
-local CoreGui = game:GetService("CoreGui")
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")  -- New: TweenService for animations
+-- Function to handle flight
+local function Fly()
+    local plr = game.Players.LocalPlayer
+    local torso = plr.Character.HumanoidRootPart
 
-local Noclip = Instance.new("ScreenGui")
-Noclip.Name = "Noclip"
-Noclip.Parent = CoreGui
+    local bg = Instance.new("BodyGyro", torso)
+    bg.P = 9e4 
+    bg.maxTorque = Vector3.new(9e9, 9e9, 9e9) 
+    bg.cframe = torso.CFrame 
+    local bv = Instance.new("BodyVelocity", torso) 
+    bv.velocity = Vector3.new(0,0.1,0) 
+    bv.maxForce = Vector3.new(9e9, 9e9, 9e9) 
+    local ctrl = {f = 0, b = 0, l = 0, r = 0} 
+    local lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+    local maxspeed = 50 
+    local speed = 0 
+    local flying = true
 
-local BG = Instance.new("Frame")
-BG.Name = "BG"
-BG.Parent = Noclip
-BG.BackgroundColor3 = Color3.new(0.0980392, 0.0980392, 0.0980392)
-BG.BorderColor3 = Color3.new(0.0588235, 0.0588235, 0.0588235)  -- New: Border color
-BG.BorderSizePixel = 2
-BG.Position = UDim2.new(0.5, -105, 0.5, -63)  -- Center the UI initially
-BG.Size = UDim2.new(0, 210, 0, 127)
-BG.Active = true
-BG.Draggable = true  -- Make the UI draggable
+    repeat 
+        wait() 
+        plr.Character.Humanoid.PlatformStand = true 
+        if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then 
+            speed = speed + .5 + (speed / maxspeed) 
+            if speed > maxspeed then 
+                speed = maxspeed 
+            end 
+        elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then 
+            speed = speed - 1 
+            if speed < 0 then 
+                speed = 0 
+            end 
+        end 
+        if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then 
+            bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f + ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l + ctrl.r, (ctrl.f + ctrl.b) * .2, 0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed 
+            lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r} 
+        elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then 
+            bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f + lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l + lastctrl.r, (lastctrl.f + lastctrl.b) * .2, 0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p)) * speed 
+        else 
+            bv.velocity = Vector3.new(0, 0.1, 0) 
+        end 
+        bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f + ctrl.b) * 50 * speed / maxspeed), 0, 0) 
+    until not flying 
 
-local Title = Instance.new("TextLabel")
-Title.Name = "Title"
-Title.Parent = BG
-Title.BackgroundColor3 = Color3.new(0.266667, 0.00392157, 0.627451)
-Title.BorderSizePixel = 2
-Title.Size = UDim2.new(1, 0, 0, 33)
-Title.Font = Enum.Font.Highway
-Title.Text = "Noclip"
-Title.TextColor3 = Color3.new(1, 1, 1)
-Title.FontSize = Enum.FontSize.Size32
-Title.TextStrokeColor3 = Color3.new(0.180392, 0, 0.431373)
-Title.TextStrokeTransparency = 0
+    ctrl = {f = 0, b = 0, l = 0, r = 0} 
+    lastctrl = {f = 0, b = 0, l = 0, r = 0} 
+    speed = 0 
+    bg:Destroy() 
+    bv:Destroy() 
+    plr.Character.Humanoid.PlatformStand = false 
+end 
 
-local Toggle = Instance.new("TextButton")
-Toggle.Parent = BG
-Toggle.BackgroundColor3 = Color3.new(0.266667, 0.00392157, 0.627451)
-Toggle.BorderSizePixel = 2
-Toggle.Position = UDim2.new(0.152380958, 0, 0.374192119, 0)
-Toggle.Size = UDim2.new(0, 146, 0, 36)
-Toggle.Font = Enum.Font.Highway
-Toggle.FontSize = Enum.FontSize.Size28
-Toggle.Text = "Toggle"
-Toggle.TextColor3 = Color3.new(1, 1, 1)
-Toggle.TextSize = 25
-Toggle.TextStrokeColor3 = Color3.new(0.180392, 0, 0.431373)
-Toggle.TextStrokeTransparency = 0
+-- UI Creation
+local gui = Instance.new("ScreenGui")
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local StatusPF = Instance.new("TextLabel")
-StatusPF.Name = "StatusPF"
-StatusPF.Parent = BG
-StatusPF.BackgroundColor3 = Color3.new(1, 1, 1)
-StatusPF.BackgroundTransparency = 1
-StatusPF.Position = UDim2.new(0.314285725, 0, 0.708661377, 0)
-StatusPF.Size = UDim2.new(0, 56, 0, 20)
-StatusPF.Font = Enum.Font.Highway
-StatusPF.FontSize = Enum.FontSize.Size24
-StatusPF.Text = "Status:"
-StatusPF.TextColor3 = Color3.new(1, 1, 1)
-StatusPF.TextSize = 20
-StatusPF.TextStrokeColor3 = Color3.new(0.333333, 0.333333, 0.333333)
-StatusPF.TextStrokeTransparency = 0
-StatusPF.TextWrapped = true
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 120, 0, 40)
+frame.Position = UDim2.new(0.5, -60, 0.8, -20)
+frame.BackgroundTransparency = 0.5
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Parent = gui
 
-local Status = Instance.new("TextLabel")
-Status.Name = "Status"
-Status.Parent = BG
-Status.BackgroundColor3 = Color3.new(1, 1, 1)
-Status.BackgroundTransparency = 1
-Status.Position = UDim2.new(0.580952346, 0, 0.708661377, 0)
-Status.Size = UDim2.new(0, 56, 0, 20)
-Status.Font = Enum.Font.Highway
-Status.FontSize = Enum.FontSize.Size14
-Status.Text = "off"
-Status.TextColor3 = Color3.new(0.666667, 0, 0)
-Status.TextScaled = true
-Status.TextSize = 14
-Status.TextStrokeColor3 = Color3.new(0.180392, 0, 0.431373)
-Status.TextWrapped = true
-Status.TextXAlignment = Enum.TextXAlignment.Left
-local Credit = Instance.new("TextLabel")
-Credit.Name = "Credit"
-Credit.Parent = BG
-Credit.BackgroundColor3 = Color3.new(1, 1, 1)
-Credit.BackgroundTransparency = 1
-Credit.Position = UDim2.new(0.195238099, 0, 0.866141737, 0)
-Credit.Size = UDim2.new(0, 128, 0, 17)
-Credit.Font = Enum.Font.SourceSans
-Credit.FontSize = Enum.FontSize.Size18
-Credit.Text = "Created by Jimmy and Glassrat"  -- Updated text
-Credit.TextColor3 = Color3.new(1, 1, 1)
-Credit.TextSize = 16
-Credit.TextStrokeColor3 = Color3.new(0.196078, 0.196078, 0.196078)
-Credit.TextStrokeTransparency = 0
-Credit.TextWrapped = true
+local toggleButton = Instance.new("TextButton")
+toggleButton.Text = "Toggle Fly"
+toggleButton.Size = UDim2.new(1, 0, 1, 0)
+toggleButton.Position = UDim2.new(0, 0, 0, 0)
+toggleButton.BackgroundTransparency = 0.7
+toggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+toggleButton.BorderSizePixel = 0
+toggleButton.Parent = frame
 
-- New: Animations for button click
-local function animateClick(button)
-    local originalSize = button.Size
-    local originalColor = button.BackgroundColor3
-    local tweenInfo = TweenInfo.new(0.1)
-    
-    local tween1 = TweenService:Create(button, tweenInfo, {
-        Size = originalSize * 1.1,
-        BackgroundColor3 = originalColor - Color3.new(0.05, 0.05, 0.05)
-    })
-    
-    local tween2 = TweenService:Create(button, tweenInfo, {
-        Size = originalSize,
-        BackgroundColor3 = originalColor
-    })
-    
-    tween1:Play()
-    tween1.Completed:Connect(function()
-        tween2:Play()
-    end)
-end
+local flying = false
 
-Toggle.MouseButton1Click:Connect(function()
-    animateClick(Toggle)  -- Animate the button click
-    
-    if Status.Text == "off" then
-        Clipon = true
-        Status.Text = "on"
-        Status.TextColor3 = Color3.new(0,185,0)
-        -- New: Animation for UI loading (example)
-        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-        local startPos = BG.Position
-        local endPos = UDim2.new(0.5, -105, 0.5, -63)
-        local tween = TweenService:Create(BG, tweenInfo, {Position = endPos})
-        tween:Play()
+toggleButton.MouseButton1Click:Connect(function()
+    flying = not flying
+    if flying then
+        Fly()
+        toggleButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        toggleButton.Text = "Flying"
     else
-        Clipon = false
-        Status.Text = "off"
-        Status.TextColor3 = Color3.new(170,0,0)
+        toggleButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        toggleButton.Text = "Toggle Fly"
     end
 end)
-
