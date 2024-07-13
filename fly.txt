@@ -1,5 +1,5 @@
 -- Variables
-local flySpeed = 250 -- Adjust this value to change the fly speed
+local flySpeed = 50 -- Adjust this value to change the fly speed
 
 -- UI Setup
 local player = game.Players.LocalPlayer
@@ -74,14 +74,14 @@ flyButton.MouseButton1Click:Connect(function()
     flyEnabled = not flyEnabled
     if flyEnabled then
         flyButton.Text = "Flying On"
-        fly()
+        startFlying()
     else
         flyButton.Text = "Toggle Fly"
         stopFlying()
     end
 end)
 
-function fly()
+local function startFlying()
     local character = player.Character
     if not character or not character:FindFirstChild("HumanoidRootPart") then
         return
@@ -89,25 +89,38 @@ function fly()
 
     local humanoid = character.Humanoid
     humanoid.PlatformStand = true
-    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
     humanoid.AutoRotate = false
 
     local hrp = character.HumanoidRootPart
-    local flySpeed = flySpeed
 
-    local function update()
-        if not hrp or not hrp.Parent then
-            return
+    local function flyUpdate()
+        local moveVector = Vector3.new(0, 0, 0)
+        local speed = flySpeed
+
+        if hrp then
+            -- Calculate movement vector based on user input
+            local forwardVector = (mouse.Target.Position - hrp.Position).unit
+            local rightVector = hrp.CFrame.RightVector
+
+            -- Calculate velocity based on input direction
+            moveVector = (forwardVector * speed) + (rightVector * speed * 0.5)
         end
-        local moveVector = Vector3.new(0, 1, 0) * flySpeed
+
         hrp.Velocity = moveVector
     end
 
-    update()
-    game:GetService("RunService").Stepped:Connect(update)
+    -- Connect flyUpdate to UserInputService for smoother control
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            flyUpdate()
+        end
+    end)
+
+    -- Initial call to flyUpdate
+    flyUpdate()
 end
 
-function stopFlying()
+local function stopFlying()
     local character = player.Character
     if not character or not character:FindFirstChild("HumanoidRootPart") then
         return
@@ -116,11 +129,11 @@ function stopFlying()
     local humanoid = character.Humanoid
     humanoid.PlatformStand = false
     humanoid.AutoRotate = true
-    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 
     local hrp = character.HumanoidRootPart
     if hrp then
         hrp.Velocity = Vector3.new(0, 0, 0)
     end
 end
+
 
