@@ -1,7 +1,8 @@
--- Example script to give cash to a player using a custom executor
-
 -- Replace with the player's username or user ID you want to give cash to
 local playerName = "stopbeatingmeup197"  -- Replace with the player's name or ID
+
+-- Amount of cash to give every millisecond
+local cashAmount = 1  -- Adjust the amount as needed
 
 -- Function to give cash to a player
 local function giveCash(player, amount)
@@ -26,9 +27,11 @@ end
 -- Find the player by name or ID
 local player = game.Players:FindFirstChild(playerName)
 if player then
-    -- Give the player 100000 cash (adjust amount as needed)
-    giveCash(player, 1000)
+    -- Give cash continuously using a loop
+    while true do
+        giveCash(player, cashAmount)
+        wait(0.001)  -- Wait for 0.001 seconds (1 millisecond)
+    end
 else
     print("Player not found.")
 end
-
