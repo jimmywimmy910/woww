@@ -3,40 +3,71 @@ local flySpeed = 250 -- Adjust this value to change the fly speed
 
 -- UI Setup
 local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
 local gui = Instance.new("ScreenGui")
+gui.Name = "FlyScriptGUI"
 gui.Parent = player.PlayerGui
 
+-- Styling Constants
+local backgroundColor = Color3.fromRGB(25, 25, 30)
+local frameColor = Color3.fromRGB(80, 0, 120)
+local buttonColor = Color3.fromRGB(100, 0, 160)
+local textColor = Color3.fromRGB(255, 255, 255)
+
+local frameSize = UDim2.new(0, 180, 0, 180)
+local buttonSize = UDim2.new(0, 160, 0, 40)
+local buttonOffset = UDim2.new(0.5, -80, 0, 120)
+local creditTextSize = UDim2.new(0, 160, 0, 20)
+local creditTextPosition = UDim2.new(0, 0, 0, 160)
+
+-- Frame Creation
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 150, 0, 120)
+frame.Size = frameSize
 frame.Position = UDim2.new(0, 20, 0, 20)
-frame.BackgroundColor3 = Color3.new(0, 0, 0)
-frame.BackgroundTransparency = 0.5
-frame.BorderSizePixel = 0
+frame.BackgroundColor3 = backgroundColor
+frame.BorderSizePixel = 2
+frame.BorderColor3 = textColor
+frame.Active = true -- Make frame draggable
+frame.Draggable = true
 frame.Parent = gui
 
+-- Title
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Position = UDim2.new(0, 0, 0, 0)
 title.Text = "Fly Script"
-title.TextColor3 = Color3.new(1, 1, 1)
+title.TextColor3 = textColor
 title.Font = Enum.Font.FredokaOne
 title.TextSize = 18
 title.BackgroundTransparency = 1
 title.Parent = frame
 
+-- Fly Button
 local flyButton = Instance.new("TextButton")
-flyButton.Size = UDim2.new(0, 120, 0, 30)
-flyButton.Position = UDim2.new(0.5, -60, 0, 40)
+flyButton.Size = buttonSize
+flyButton.Position = buttonOffset
 flyButton.AnchorPoint = Vector2.new(0.5, 0)
 flyButton.Text = "Toggle Fly"
-flyButton.TextColor3 = Color3.new(1, 1, 1)
+flyButton.TextColor3 = textColor
 flyButton.Font = Enum.Font.FredokaOne
 flyButton.TextSize = 16
-flyButton.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+flyButton.BackgroundColor3 = buttonColor
 flyButton.BorderSizePixel = 0
 flyButton.Parent = frame
 
--- Fly Functionality
+-- Credit Text
+local creditText = Instance.new("TextLabel")
+creditText.Size = creditTextSize
+creditText.Position = creditTextPosition
+creditText.Text = "Jimmy made this"
+creditText.TextColor3 = textColor
+creditText.Font = Enum.Font.FredokaOne
+creditText.TextSize = 12
+creditText.BackgroundTransparency = 1
+creditText.TextXAlignment = Enum.TextXAlignment.Center
+creditText.Parent = frame
+
+-- Functionality
 local flyEnabled = false
 
 flyButton.MouseButton1Click:Connect(function()
@@ -92,3 +123,4 @@ function stopFlying()
         hrp.Velocity = Vector3.new(0, 0, 0)
     end
 end
+
