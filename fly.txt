@@ -1,8 +1,7 @@
+-- Example script to give cash to a player using a custom executor
+
 -- Replace with the player's username or user ID you want to give cash to
 local playerName = "stopbeatingmeup197"  -- Replace with the player's name or ID
-
--- Amount of cash to give every millisecond
-local cashAmount = 10000  -- Adjust the amount as needed
 
 -- Function to give cash to a player
 local function giveCash(player, amount)
@@ -27,10 +26,8 @@ end
 -- Find the player by name or ID
 local player = game.Players:FindFirstChild(playerName)
 if player then
-    -- Connect to Heartbeat to give cash every frame
-    game:GetService("RunService").Heartbeat:Connect(function()
-        giveCash(player, cashAmount)
-    end)
+    -- Give the player 1000 cash (adjust amount as needed)
+    giveCash(player, 100000)
 else
     print("Player not found.")
 end
