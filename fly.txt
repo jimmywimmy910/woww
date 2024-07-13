@@ -38,174 +38,123 @@ TextLabel.TextScaled = true
 TextLabel.TextSize = 14.000
 TextLabel.TextWrapped = true
 
--- Scripts:
-local function Fly()
-    local plr = game.Players.LocalPlayer
-    repeat wait() until plr and plr.Character and plr.Character:findFirstChild("HumanoidRootPart") and plr.Character:findFirstChild("Humanoid")
-    
-    local mouse = plr:GetMouse()
-    repeat wait() until mouse
-    
-    local torso = plr.Character.HumanoidRootPart
-    local flying = false
-    local ctrl = {f = 0, b = 0, l = 0, r = 0}
-    local lastctrl = {f = 0, b = 0, l = 0, r = 0}
-    local maxspeed = 1000
-    local speed = 50
-    
-    function Fly()
-        local bg = Instance.new("BodyGyro", torso)
-        bg.P = 9e4
-        bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-        bg.cframe = torso.CFrame
-        local bv = Instance.new("BodyVelocity", torso)
-        bv.velocity = Vector3.new(0,0.1,0)
-        bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
-        
-        repeat wait()
-            plr.Character.Humanoid.PlatformStand = true
-            if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
-                speed = speed+.5+(speed/maxspeed)
-                if speed > maxspeed then
-                    speed = maxspeed
-                end
-            elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
-                speed = speed-1
-                if speed < 0 then
-                    speed = 0
-                else
-                    speed = 50
-                end
-            end
-            
-            if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CFrame.p))*speed
-                lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
-            elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
-                bv.velocity = ((game.Workspace.CurrentCamera.CFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CFrame.p))*speed
-            else
-                bv.velocity = Vector3.new(0,0.1,0)
-            end
-            
-            bg.cframe = game.Workspace.CurrentCamera.CFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
-        until not flying
-        
-        ctrl = {f = 0, b = 0, l = 0, r = 0}
-        lastctrl = {f = 0, b = 0, l = 0, r = 0}
-        
-        bg:Destroy()
-        bv:Destroy()
-        plr.Character.Humanoid.PlatformStand = false
-        speed = 50
+-- Variables:
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local flying = false
+local speed = 50
+local isR15 = false
+
+-- Functions:
+local function getRootPart(character)
+    if isR15 then
+        return character.HumanoidRootPart
+    else
+        return character:FindFirstChild("HumanoidRootPart") or character:FindFirstChild("Torso")
     end
+end
+
+local function setupCharacter()
+    local character = player.Character or player.CharacterAdded:Wait()
+    isR15 = character.Humanoid.RigType == Enum.HumanoidRigType.R15
+end
+
+local function startFlying()
+    local character = player.Character
+    if not character then return end
     
-    mouse.KeyDown:connect(function(key)
+    local rootPart = getRootPart(character)
+    if not rootPart then return end
+    
+    local humanoid = character:WaitForChild("Humanoid")
+    humanoid.PlatformStand = true
+    
+    local bodyGyro = Instance.new("BodyGyro")
+    bodyGyro.Parent = rootPart
+    bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    bodyGyro.CFrame = rootPart.CFrame
+    
+    local bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.Parent = rootPart
+    bodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    
+    mouse.KeyDown:Connect(function(key)
         if key:lower() == "e" then
             flying = not flying
             if flying then
-                Fly()
+                bodyGyro.CFrame = rootPart.CFrame
+                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                bodyVelocity.Velocity = Vector3.new(0, 0.1, 0)
+                fly()
+            else
+                bodyGyro:Destroy()
+                bodyVelocity:Destroy()
+                humanoid.PlatformStand = false
             end
-        elseif key:lower() == "w" then
-            ctrl.f = 1
-        elseif key:lower() == "s" then
-            ctrl.b = -1
-        elseif key:lower() == "a" then
-            ctrl.l = -1
-        elseif key:lower() == "d" then
-            ctrl.r = 1
         end
     end)
     
-    mouse.KeyUp:connect(function(key)
-        if key:lower() == "w" then
-            ctrl.f = 0
-        elseif key:lower() == "s" then
-            ctrl.b = 0
-        elseif key:lower() == "a" then
-            ctrl.l = 0
-        elseif key:lower() == "d" then
-            ctrl.r = 0
+    mouse.KeyUp:Connect(function(key)
+        if key:lower() == "e" then
+            flying = false
+            bodyGyro:Destroy()
+            bodyVelocity:Destroy()
+            humanoid.PlatformStand = false
         end
     end)
     
-    plr.Character.Humanoid.StateChanged:Connect(function(_, newState)
-        if newState == Enum.HumanoidStateType.Running then
-            ctrl.f = 1
-        else
-            ctrl.f = 0
+    mouse.Move:Connect(function()
+        if flying then
+            bodyGyro.CFrame = CFrame.new(rootPart.Position, rootPart.Position + Vector3.new(0, -1, 0))
         end
     end)
 end
 
-Fly()
+-- Main:
+setupCharacter()
 
-local function RAQA_fake_script() -- Frame.Buttons
-    local script = Instance.new('LocalScript', Frame)
-    
-    local Trigger = script.Parent.TextButton
-    local IsFlying = false
-    
-    local function CreateTween(instance, style, direction, time, properties)
-        local TweenService = game:GetService("TweenService")
-        local tweenInfo = TweenInfo.new(time, style, direction)
-        local tween = TweenService:Create(instance, tweenInfo, properties)
-        tween:Play()
-        return tween
+TextButton.MouseButton1Click:Connect(function()
+    flying = not flying
+    if flying then
+        TextButton.Text = "Stop Flying"
+        startFlying()
+    else
+        TextButton.Text = "Fly"
     end
-    
-    Trigger.MouseButton1Click:Connect(function()
-        IsFlying = not IsFlying
-        if IsFlying then
-            Trigger.Text = "Stop Flying"
-            -- Start flying logic if needed
-        else
-            Trigger.Text = "Fly"
-            -- Stop flying logic if needed
-        end
-    end)
-end
-coroutine.wrap(RAQA_fake_script)()
+end)
 
-local function TKVUMP_fake_script() -- Frame.Drag Gui
-    local script = Instance.new('LocalScript', Frame)
-    
-    local UserInputService = game:GetService("UserInputService")
-    
-    local gui = script.Parent
-    local dragging
-    local dragInput
-    local dragStart
-    local startPos
-    
-    local function update(input)
+-- Draggable GUI:
+local UserInputService = game:GetService("UserInputService")
+
+local gui = Frame
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+gui.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = gui.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+gui.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
         local delta = input.Position - dragStart
         gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
-    
-    gui.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = gui.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-    
-    gui.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            update(input)
-        end
-    end)
-end
-coroutine.wrap(TKVUMP_fake_script)()
+end)
