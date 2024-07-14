@@ -8,40 +8,48 @@ local UserId = LocalPlayer.UserId
 -- Function to create an ESP (Extra Sensory Perception) effect
 local function createESP(player)
     if player == LocalPlayer then return end
-    if player.Character then
-        for _, part in ipairs(player.Character:GetChildren()) do
-            if part:IsA("BasePart") then
-                -- Create a neon outline visible through walls
-                local highlight = Instance.new("BoxHandleAdornment")
-                highlight.Adornee = part
-                highlight.AlwaysOnTop = true
-                highlight.ZIndex = 10
-                highlight.Size = part.Size
-                highlight.Color3 = Color3.fromRGB(0, 255, 0) -- Neon green color
-                highlight.Transparency = 0.7
-                highlight.Parent = part
+
+    local function applyESP(character)
+        if character then
+            for _, part in ipairs(character:GetChildren()) do
+                if part:IsA("BasePart") then
+                    -- Create a neon outline visible through walls
+                    local highlight = Instance.new("BoxHandleAdornment")
+                    highlight.Adornee = part
+                    highlight.AlwaysOnTop = true
+                    highlight.ZIndex = 10
+                    highlight.Size = part.Size
+                    highlight.Color3 = Color3.fromRGB(0, 255, 0) -- Neon green color
+                    highlight.Transparency = 0.7
+                    highlight.Parent = part
+                end
             end
+
+            -- Create a BillboardGui for the username
+            local billboard = Instance.new("BillboardGui")
+            billboard.Adornee = character:WaitForChild("Head")
+            billboard.Size = UDim2.new(0, 200, 0, 50)
+            billboard.StudsOffset = Vector3.new(0, 2, 0)
+            billboard.AlwaysOnTop = true
+
+            local nameLabel = Instance.new("TextLabel")
+            nameLabel.Parent = billboard
+            nameLabel.Size = UDim2.new(1, 0, 1, 0)
+            nameLabel.BackgroundTransparency = 1
+            nameLabel.Text = player.Name
+            nameLabel.TextColor3 = Color3.new(1, 1, 1)
+            nameLabel.TextStrokeTransparency = 0.5
+            nameLabel.Font = Enum.Font.FredokaOne
+            nameLabel.TextSize = 20
+            nameLabel.TextYAlignment = Enum.TextYAlignment.Bottom
+
+            billboard.Parent = character:WaitForChild("Head")
         end
+    end
 
-        -- Create a BillboardGui for the username
-        local billboard = Instance.new("BillboardGui")
-        billboard.Adornee = player.Character:WaitForChild("Head")
-        billboard.Size = UDim2.new(0, 200, 0, 50)
-        billboard.StudsOffset = Vector3.new(0, 2, 0)
-        billboard.AlwaysOnTop = true
-
-        local nameLabel = Instance.new("TextLabel")
-        nameLabel.Parent = billboard
-        nameLabel.Size = UDim2.new(1, 0, 1, 0)
-        nameLabel.BackgroundTransparency = 1
-        nameLabel.Text = player.Name
-        nameLabel.TextColor3 = Color3.new(1, 1, 1)
-        nameLabel.TextStrokeTransparency = 0.5
-        nameLabel.Font = Enum.Font.FredokaOne
-        nameLabel.TextSize = 20
-        nameLabel.TextYAlignment = Enum.TextYAlignment.Bottom
-
-        billboard.Parent = player.Character:WaitForChild("Head")
+    player.CharacterAdded:Connect(applyESP)
+    if player.Character then
+        applyESP(player.Character)
     end
 end
 
@@ -166,8 +174,6 @@ end
 
 -- Highlight new players when they join
 Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        wait(0.1) -- Wait for the character to load
-        createESP(player)
-    end)
+    createESP(player)
 end)
+
