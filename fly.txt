@@ -1,35 +1,113 @@
--- Replace with the player's username or user ID you want to give cash to
-local playerName = "stopbeatingmeup197"  -- Replace with the player's name or ID
+-- Highlight all players in the game with neon outlines visible through walls
+-- This script should be executed on the client side
 
--- Function to give cash to a player
-local function giveCash(player, amount)
-    -- Check if player and player's leaderstats exist
-    local leaderstats = player:FindFirstChild("leaderstats")
-    if leaderstats then
-        -- Check if Cash value exists in leaderstats
-        local cash = leaderstats:FindFirstChild("Cash")
-        if cash then
-            -- Add amount to Cash value
-            cash.Value = cash.Value + amount
-        else
-            -- Create Cash value if it doesn't exist
-            cash = Instance.new("IntValue")
-            cash.Name = "Cash"
-            cash.Value = amount
-            cash.Parent = leaderstats
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- Function to create an ESP (Extra Sensory Perception) effect
+local function createESP(player)
+    if player == LocalPlayer then return end
+    if player.Character then
+        for _, part in ipairs(player.Character:GetChildren()) do
+            if part:IsA("BasePart") then
+                -- Create a neon outline visible through walls
+                local highlight = Instance.new("BoxHandleAdornment")
+                highlight.Adornee = part
+                highlight.AlwaysOnTop = true
+                highlight.ZIndex = 10
+                highlight.Size = part.Size
+                highlight.Color3 = Color3.fromRGB(255, 0, 0) -- Red color
+                highlight.Transparency = 0.7
+                highlight.Parent = part
+            end
+        end
+
+        -- Create a BillboardGui for the username
+        local billboard = Instance.new("BillboardGui")
+        billboard.Adornee = player.Character:WaitForChild("Head")
+        billboard.Size = UDim2.new(0, 200, 0, 50)
+        billboard.StudsOffset = Vector3.new(0, 2, 0)
+        billboard.AlwaysOnTop = true
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Parent = billboard
+        nameLabel.Size = UDim2.new(1, 0, 1, 0)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Text = player.Name
+        nameLabel.TextColor3 = Color3.new(1, 1, 1)
+        nameLabel.TextStrokeTransparency = 0.5
+        nameLabel.Font = Enum.Font.FredokaOne
+        nameLabel.TextSize = 20
+        nameLabel.TextYAlignment = Enum.TextYAlignment.Bottom
+
+        billboard.Parent = player.Character:WaitForChild("Head")
+    end
+end
+
+-- UI setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 200, 0, 300)
+Frame.Position = UDim2.new(0, 10, 0, 10)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = Frame
+UIListLayout.FillDirection = Enum.FillDirection.Vertical
+UIListLayout.Padding = UDim.new(0, 5)
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Parent = Frame
+titleLabel.Size = UDim2.new(1, 0, 0, 50)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Player ESP"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.FredokaOne
+titleLabel.TextSize = 24
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Parent = Frame
+toggleButton.Size = UDim2.new(1, 0, 0, 50)
+toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+toggleButton.TextColor3 = Color3.new(1, 1, 1)
+toggleButton.Font = Enum.Font.FredokaOne
+toggleButton.TextSize = 20
+toggleButton.Text = "Toggle ESP"
+
+local function toggleESP()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if player.Character then
+                local head = player.Character:FindFirstChild("Head")
+                if head then
+                    for _, child in ipairs(head:GetChildren()) do
+                        if child:IsA("BillboardGui") or child:IsA("BoxHandleAdornment") then
+                            child.Enabled = not child.Enabled
+                        end
+                    end
+                end
+            end
         end
     end
 end
 
--- Find the player by name or ID
-local player = game.Players:FindFirstChild(playerName)
-if player then
-    -- Give the player 1000 cash (adjust amount as needed)
-    giveCash(player, 100000)
+toggleButton.MouseButton1Click:Connect(toggleESP)
 
-    -- Wait for 1 second before allowing the script to give cash again
-    wait(1)
-else
-    print("Player not found.")
+-- Highlight all existing players
+for _, player in ipairs(Players:GetPlayers()) do
+    createESP(player)
 end
+
+-- Highlight new players when they join
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        wait(0.1) -- Wait for the character to load
+        createESP(player)
+    end)
+end)
+
 
