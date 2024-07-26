@@ -1,1 +1,181 @@
+_G.autoequipbest = false
+_G.autogetcoin = false
+_G.autoegg = false
+_G.autoclaimdailyegg = false
+_G.autoclaimquestreward = false
+_G.areas = ""
+_G.eggs = ""
+_G.hatchcd = ""
+_G.allarea = {}
+_G.egglist = {}
+
+function autoebest()
+    spawn(function()
+        pcall(function()
+            while _G.autoequipbest do wait()
+                game:GetService("ReplicatedStorage").Remotes.EquipBest:FireServer()
+            end
+        end)
+    end)
+end
+
+function getcoin()
+    spawn(function()
+        pcall(function()
+            while _G.autogetcoin do wait()
+                for i,v in pairs(workspace.Drops:GetChildren()) do
+                    if v:FindFirstChild("Base") ~= nil then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Base.CFrame
+                        if game.Players.LocalPlayer.Character.Humanoid.Sit == true then
+                            game.Players.LocalPlayer.Character.Humanoid.Sit = false
+                        end
+                    end
+                end
+            end
+        end)
+    end)
+end
+
+function autocde()
+    spawn(function()
+        pcall(function()
+            while _G.autoclaimdailyegg do wait()
+                if workspace.DailyEgg.GuiPart.Gui.ReadyLabel.Visible then
+                    fireproximityprompt(workspace.DailyEgg.ProxPart.Prox)
+                end
+            end
+        end)
+    end)
+end
+
+function autocqrw()
+    spawn(function()
+        pcall(function()
+            while _G.autoclaimquestreward do wait(1)
+                game:GetService("ReplicatedStorage").Remotes.ClaimQuestReward:FireServer()
+            end
+        end)
+    end)
+end
+
+function autoe()
+    spawn(function()
+        pcall(function()
+            while _G.autoegg do wait()
+                game:GetService("ReplicatedStorage").Remotes.BuyEgg:FireServer(tonumber(_G.aeggs))
+                wait(tonumber(_G.hatchcd))
+            end
+        end)
+    end)
+end
+
+local library = loadstring(game:HttpGet('https://raw.githubusercontent.com/sublime-ui/sublime/main/source'))()
+
+local w = library:CreateWindow("Collect All Pets!")
+
+local b = w:CreateFolder("Main Features")
+
+b:Toggle("Auto Get Coin", function(bool)
+    _G.autogetcoin = bool
+    getcoin()
+end)
+
+b:Toggle("Auto Claim Quest Reward", function(bool)
+    _G.autoclaimquestreward = bool
+    autocqrw()
+end)
+
+b:Toggle("Auto Claim Daily Egg", function(bool)
+    _G.autoclaimdailyegg = bool
+    autocde()
+end)
+
+local c = w:CreateFolder("Pet Management")
+
+c:Button("Equip Best Pet", function()
+    game:GetService("ReplicatedStorage").Remotes.EquipBest:FireServer()
+end)
+
+for i, v in pairs(workspace.EggShops:GetChildren()) do
+    if v:IsA("Model") then
+        if not table.find(_G.egglist, tostring(string.split(v.Name, "_")[2])) then
+            table.insert(_G.egglist, tostring(string.split(v.Name, "_")[2]))
+        end
+    end
+end
+
+c:Dropdown("Select Egg", _G.egglist, true, function(egg)
+    _G.aeggs = workspace.EggShops["EggShop_" .. egg].Rarity.Value
+end)
+
+c:Toggle("Auto Buy Egg", function(bool)
+    _G.autoegg = bool
+    autoe()
+end)
+
+c:Slider("Hatch Cooldown (Sec)", {
+    min = 0.1;
+    max = 100;
+    precise = true;
+}, function(value)
+    _G.hatchcd = value
+end)
+
+c:Button("Buy Egg", function()
+    pcall(function()
+        game:GetService("ReplicatedStorage").Remotes.BuyEgg:FireServer(tonumber(_G.eggs))
+    end)
+end)
+
+c:Button("Get All Hidden Eggs", function()
+    pcall(function()
+        for i, v in pairs(workspace.HiddenEggs:GetDescendants()) do
+            if v:IsA("TouchTransmitter") then
+                firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 0)
+                firetouchinterest(game.Players.LocalPlayer.Character.Head, v.Parent, 1)
+            end
+        end
+    end)
+end)
+
+local d = w:CreateFolder("Teleportation")
+
+for i, v in pairs(workspace.Areas:GetChildren()) do
+    _G.allarea[i] = v.Name
+end
+
+d:Dropdown("Select Place", _G.allarea, true, function(area)
+    _G.areas = area
+end)
+
+d:Button("Teleport", function()
+    pcall(function()
+        local eee = workspace.Areas[_G.areas].CFrame
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(eee.X, eee.Y + 5, eee.Z)
+    end)
+end)
+
+local misc = w:CreateFolder("Miscellaneous")
+
+misc:Slider("WalkSpeed", {
+    min = 0;
+    max = 200;
+    precise = true;
+}, function(value)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+end)
+
+misc:Button("Infinite Yield", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source', true))()
+end)
+
+local e = w:CreateFolder("Credits")
+
+e:Label("Developed by Basement Studios", {
+    TextSize = 20;
+    TextColor = Color3.fromRGB(255, 255, 255);
+    BgColor = Color3.fromRGB(30, 30, 30);
+})
+
+e:DestroyGui()
 
