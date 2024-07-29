@@ -3,10 +3,8 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
-local HttpService = game:GetService("HttpService")
-
 local groupId = 34701815 -- Your group ID
-local groupLink = "https://www.roblox.com/groups/34701815" -- Your group link
+local groupLink = "https://www.roblox.com/groups/34701815/Basement-Studios-V2#!/about" -- Your group link
 local notificationSoundId = "rbxassetid://3398620867" -- Your sound ID
 
 -- Create ScreenGui
@@ -14,47 +12,38 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BasementStudiosHub"
 ScreenGui.Parent = PlayerGui
 
--- Background Image
-local Background = Instance.new("ImageLabel")
-Background.Size = UDim2.new(1, 0, 1, 0)
-Background.Position = UDim2.new(0, 0, 0, 0)
-Background.Image = "rbxassetid://16034054360" -- Replace with your background image asset ID
-Background.ScaleType = Enum.ScaleType.Crop
-Background.Parent = ScreenGui
-
--- Create Main Frame
+-- Create Main Frame with a sleek look
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -250)
-MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-MainFrame.BackgroundTransparency = 0.5
+MainFrame.Size = UDim2.new(0, 450, 0, 400)
+MainFrame.Position = UDim2.new(0.5, -225, 0.5, -200)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Dark background
 MainFrame.BorderSizePixel = 0
-MainFrame.Parent = Background
+MainFrame.Parent = ScreenGui
 
 local UICornerMain = Instance.new("UICorner")
 UICornerMain.CornerRadius = UDim.new(0, 15)
 UICornerMain.Parent = MainFrame
 
--- Title
+-- Title with a stylish font
 local Title = Instance.new("TextLabel")
 Title.Text = "Basement Studios"
-Title.Size = UDim2.new(1, 0, 0, 70)
+Title.Size = UDim2.new(1, 0, 0, 50)
 Title.BackgroundTransparency = 1
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 36
+Title.TextSize = 28
 Title.Parent = MainFrame
 
--- Avatar Image
+-- Avatar Image with rounded corners
 local Avatar = Instance.new("ImageLabel")
-Avatar.Size = UDim2.new(0, 120, 0, 120)
-Avatar.Position = UDim2.new(0, 20, 0, 80)
+Avatar.Size = UDim2.new(0, 100, 0, 100)
+Avatar.Position = UDim2.new(0, 20, 0, 70)
 Avatar.BackgroundTransparency = 1
 Avatar.BorderSizePixel = 0
 Avatar.Parent = MainFrame
 
 local UICornerAvatar = Instance.new("UICorner")
-UICornerAvatar.CornerRadius = UDim.new(0.5, 0)
+UICornerAvatar.CornerRadius = UDim.new(0.5, 0) -- Fully rounded
 UICornerAvatar.Parent = Avatar
 
 local thumbType = Enum.ThumbnailType.HeadShot
@@ -62,32 +51,21 @@ local thumbSize = Enum.ThumbnailSize.Size100x100
 local content, isReady = Players:GetUserThumbnailAsync(LocalPlayer.UserId, thumbType, thumbSize)
 Avatar.Image = content
 
--- Section Headers
-local SectionHeader1 = Instance.new("TextLabel")
-SectionHeader1.Text = "Farm Crates"
-SectionHeader1.Size = UDim2.new(0, 200, 0, 40)
-SectionHeader1.Position = UDim2.new(0, 160, 0, 120)
-SectionHeader1.BackgroundTransparency = 1
-SectionHeader1.TextColor3 = Color3.fromRGB(255, 255, 255)
-SectionHeader1.Font = Enum.Font.Gotham
-SectionHeader1.TextSize = 24
-SectionHeader1.Parent = MainFrame
-
-local SectionHeader2 = Instance.new("TextLabel")
-SectionHeader2.Text = "Auto Collector"
-SectionHeader2.Size = UDim2.new(0, 200, 0, 40)
-SectionHeader2.Position = UDim2.new(0, 160, 0, 180)
-SectionHeader2.BackgroundTransparency = 1
-SectionHeader2.TextColor3 = Color3.fromRGB(255, 255, 255)
-SectionHeader2.Font = Enum.Font.Gotham
-SectionHeader2.TextSize = 24
-SectionHeader2.Parent = MainFrame
-
 -- Toggle Switch Button and Label
+local ToggleLabel = Instance.new("TextLabel")
+ToggleLabel.Text = "Farm Crates"
+ToggleLabel.Size = UDim2.new(0, 200, 0, 30)
+ToggleLabel.Position = UDim2.new(0, 20, 0, 190)
+ToggleLabel.BackgroundTransparency = 1
+ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleLabel.Font = Enum.Font.Gotham
+ToggleLabel.TextSize = 20
+ToggleLabel.Parent = MainFrame
+
 local ToggleSwitchFrame = Instance.new("Frame")
 ToggleSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
-ToggleSwitchFrame.Position = UDim2.new(0, 380, 0, 120)
-ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ToggleSwitchFrame.Position = UDim2.new(0, 220, 0, 190)
+ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 ToggleSwitchFrame.BorderSizePixel = 0
 ToggleSwitchFrame.Parent = MainFrame
 
@@ -100,6 +78,7 @@ ToggleSwitchButton.Text = ""
 ToggleSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
 ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
 ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ToggleSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleSwitchButton.BorderSizePixel = 0
 ToggleSwitchButton.Parent = ToggleSwitchFrame
 
@@ -108,10 +87,20 @@ UICornerToggleButton.CornerRadius = UDim.new(0, 15)
 UICornerToggleButton.Parent = ToggleSwitchButton
 
 -- Auto Collector Switch and Label
+local AutoCollectLabel = Instance.new("TextLabel")
+AutoCollectLabel.Text = "Auto Collector"
+AutoCollectLabel.Size = UDim2.new(0, 200, 0, 30)
+AutoCollectLabel.Position = UDim2.new(0, 20, 0, 230)
+AutoCollectLabel.BackgroundTransparency = 1
+AutoCollectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoCollectLabel.Font = Enum.Font.Gotham
+AutoCollectLabel.TextSize = 20
+AutoCollectLabel.Parent = MainFrame
+
 local AutoCollectSwitchFrame = Instance.new("Frame")
 AutoCollectSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
-AutoCollectSwitchFrame.Position = UDim2.new(0, 380, 0, 180)
-AutoCollectSwitchFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+AutoCollectSwitchFrame.Position = UDim2.new(0, 220, 0, 230)
+AutoCollectSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 AutoCollectSwitchFrame.BorderSizePixel = 0
 AutoCollectSwitchFrame.Parent = MainFrame
 
@@ -124,6 +113,7 @@ AutoCollectSwitchButton.Text = ""
 AutoCollectSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
 AutoCollectSwitchButton.Position = UDim2.new(0, 2, 0, 2)
 AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+AutoCollectSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoCollectSwitchButton.BorderSizePixel = 0
 AutoCollectSwitchButton.Parent = AutoCollectSwitchFrame
 
@@ -131,14 +121,14 @@ local UICornerAutoCollectButton = Instance.new("UICorner")
 UICornerAutoCollectButton.CornerRadius = UDim.new(0, 15)
 UICornerAutoCollectButton.Parent = AutoCollectSwitchButton
 
--- Credits Button
+-- Credits Button and Frame
 local CreditsButton = Instance.new("TextButton")
 CreditsButton.Text = "Credits"
 CreditsButton.Size = UDim2.new(0, 100, 0, 40)
-CreditsButton.Position = UDim2.new(0, 200, 0, 400)
-CreditsButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+CreditsButton.Position = UDim2.new(0.5, -50, 1, -50)
+CreditsButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 CreditsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditsButton.Font = Enum.Font.GothamBold
+CreditsButton.Font = Enum.Font.Gotham
 CreditsButton.TextSize = 18
 CreditsButton.BorderSizePixel = 0
 CreditsButton.Parent = MainFrame
@@ -147,11 +137,10 @@ local UICornerCreditsButton = Instance.new("UICorner")
 UICornerCreditsButton.CornerRadius = UDim.new(0, 10)
 UICornerCreditsButton.Parent = CreditsButton
 
--- Credits Frame
 local CreditsFrame = Instance.new("Frame")
-CreditsFrame.Size = UDim2.new(0, 400, 0, 200)
-CreditsFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
-CreditsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+CreditsFrame.Size = UDim2.new(0, 200, 0, 100)
+CreditsFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+CreditsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Dark background
 CreditsFrame.Visible = false
 CreditsFrame.Parent = ScreenGui
 
@@ -160,86 +149,114 @@ UICornerCreditsFrame.CornerRadius = UDim.new(0, 15)
 UICornerCreditsFrame.Parent = CreditsFrame
 
 local CreditsLabel = Instance.new("TextLabel")
-CreditsLabel.Text = "Script made by:\nOwner: Jimmy\nCo-Owner: Glassrat"
-CreditsLabel.Size = UDim2.new(1, -20, 1, -20)
-CreditsLabel.Position = UDim2.new(0, 10, 0, 10)
+CreditsLabel.Text = "Owner: Jimmy\nCo-Owner: Glassrat"
+CreditsLabel.Size = UDim2.new(1, 0, 1, 0)
 CreditsLabel.BackgroundTransparency = 1
 CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreditsLabel.Font = Enum.Font.Gotham
-CreditsLabel.TextSize = 24
+CreditsLabel.TextSize = 18
 CreditsLabel.TextWrapped = true
+CreditsLabel.TextYAlignment = Enum.TextYAlignment.Top
 CreditsLabel.Parent = CreditsFrame
 
 -- Notification Frame
 local NotificationFrame = Instance.new("Frame")
 NotificationFrame.Size = UDim2.new(0, 300, 0, 100)
-NotificationFrame.Position = UDim2.new(1, -300, 1, -100)
-NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NotificationFrame.Position = UDim2.new(1, 100, 1, -100)
+NotificationFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 NotificationFrame.BorderSizePixel = 0
 NotificationFrame.Visible = false
 NotificationFrame.Parent = ScreenGui
 
 local UICornerNotificationFrame = Instance.new("UICorner")
-UICornerNotificationFrame.CornerRadius = UDim.new(0, 10)
+UICornerNotificationFrame.CornerRadius = UDim.new(0, 15)
 UICornerNotificationFrame.Parent = NotificationFrame
 
 local NotificationLabel = Instance.new("TextLabel")
 NotificationLabel.Text = ""
-NotificationLabel.Size = UDim2.new(1, -20, 1, -20)
-NotificationLabel.Position = UDim2.new(0, 10, 0, 10)
+NotificationLabel.Size = UDim2.new(1, 0, 0.7, 0)
+NotificationLabel.Position = UDim2.new(0, 0, 0, 0)
 NotificationLabel.BackgroundTransparency = 1
 NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-NotificationLabel.Font = Enum.Font.Gotham
+NotificationLabel.Font = Enum.Font.GothamBold
 NotificationLabel.TextSize = 20
 NotificationLabel.TextWrapped = true
+NotificationLabel.TextYAlignment = Enum.TextYAlignment.Top
 NotificationLabel.Parent = NotificationFrame
 
-local NotificationSound = Instance.new("Sound")
-NotificationSound.SoundId = notificationSoundId
-NotificationSound.Parent = NotificationFrame
+local NotificationButton = Instance.new("TextButton")
+NotificationButton.Text = "Copy Link"
+NotificationButton.Size = UDim2.new(1, 0, 0.3, 0)
+NotificationButton.Position = UDim2.new(0, 0, 0.7, 0)
+NotificationButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
+NotificationButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+NotificationButton.Font = Enum.Font.GothamBold
+NotificationButton.TextSize = 18
+NotificationButton.Parent = NotificationFrame
 
--- Function to check group membership
-local function checkGroupMembership()
-    local player = LocalPlayer
-    local isInGroup = player.MembershipType == Enum.MembershipType.Premium and player:GetRankInGroup(groupId) > 0
+-- Function to show notification
+local function showNotification()
+    NotificationLabel.Text = "Join Our Roblox Group for more scripts!"
+    NotificationFrame.Visible = true
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local goalIn = {Position = UDim2.new(0.5, -150, 1, -150)}
+    local tweenIn = TweenService:Create(NotificationFrame, tweenInfo, goalIn)
+    tweenIn:Play()
 
-    if not isInGroup then
-        -- Display notification
-        NotificationLabel.Text = "You must join the group to play this game."
-        NotificationFrame.Visible = true
-        NotificationSound:Play()
+    wait(5) -- Show for 5 seconds
 
-        -- Wait for a few seconds before kicking
-        wait(5) -- Adjust wait time as needed
+    local goalOut = {Position = UDim2.new(1, 100, 1, -100)}
+    local tweenOut = TweenService:Create(NotificationFrame, tweenInfo, goalOut)
+    tweenOut:Play()
 
-        -- Kick player
-        player:Kick("You must join the group to play this game. Visit " .. groupLink .. " to join.")
-    else
-        -- Hide the notification if the player is in the group
+    tweenOut.Completed:Connect(function()
         NotificationFrame.Visible = false
+    end)
+end
+
+-- Function to copy link to clipboard
+local function copyToClipboard(text)
+    local clipboard = Instance.new("StringValue")
+    clipboard.Name = "Clipboard"
+    clipboard.Value = text
+    clipboard.Parent = PlayerGui
+    clipboard:Destroy()
+end
+
+NotificationButton.MouseButton1Click:Connect(function()
+    copyToClipboard(groupLink)
+end)
+
+-- Play notification sound every 10 minutes
+local function playNotificationSound()
+    local sound = Instance.new("Sound")
+    sound.SoundId = notificationSoundId
+    sound.Parent = SoundService
+    sound:Play()
+end
+
+-- Check if player is in group
+local function checkGroupMembership()
+    local success, isInGroup = pcall(function()
+        return LocalPlayer.MembershipType == Enum.MembershipType.Premium or LocalPlayer:HasGroup(groupId)
+    end)
+
+    if not success or not isInGroup then
+        LocalPlayer:Kick("Join the group to use this script: " .. groupLink)
     end
 end
 
--- Call the function to check group membership
-checkGroupMembership()
+-- Show notification every 10 minutes
+while true do
+    playNotificationSound()
+    showNotification()
+    wait(600) -- 10 minutes
+end
 
--- Toggle Button Functionality
-ToggleSwitchButton.MouseButton1Click:Connect(function()
-    if ToggleSwitchButton.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
-        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-end)
-
-AutoCollectSwitchButton.MouseButton1Click:Connect(function()
-    if AutoCollectSwitchButton.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
-        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-end)
-
+-- Show credits frame on button click
 CreditsButton.MouseButton1Click:Connect(function()
     CreditsFrame.Visible = not CreditsFrame.Visible
 end)
+
+-- Check group membership
+checkGroupMembership()
