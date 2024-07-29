@@ -1,46 +1,60 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local Workspace = game:GetService("Workspace")
-local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local SoundService = game:GetService("SoundService")
+local HttpService = game:GetService("HttpService")
+
+local groupId = 34701815 -- Your group ID
+local groupLink = "https://www.roblox.com/groups/34701815" -- Your group link
+local notificationSoundId = "rbxassetid://3398620867" -- Your sound ID
 
 -- Create ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BasementStudiosHub"
 ScreenGui.Parent = PlayerGui
 
--- Create Main Frame with rounded corners and a sleek look
+-- Background Image
+local Background = Instance.new("ImageLabel")
+Background.Size = UDim2.new(1, 0, 1, 0)
+Background.Position = UDim2.new(0, 0, 0, 0)
+Background.Image = "rbxassetid://16034054360" -- Replace with your background image asset ID
+Background.ScaleType = Enum.ScaleType.Crop
+Background.Parent = ScreenGui
+
+-- Create Main Frame
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 450, 0, 400)
-MainFrame.Position = UDim2.new(0.5, -225, 0.5, -200)
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Size = UDim2.new(0, 500, 0, 500)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -250)
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BackgroundTransparency = 0.5
 MainFrame.BorderSizePixel = 0
-MainFrame.Parent = ScreenGui
+MainFrame.Parent = Background
 
 local UICornerMain = Instance.new("UICorner")
 UICornerMain.CornerRadius = UDim.new(0, 15)
 UICornerMain.Parent = MainFrame
 
--- Title with a stylish font
+-- Title
 local Title = Instance.new("TextLabel")
 Title.Text = "Basement Studios"
-Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Size = UDim2.new(1, 0, 0, 70)
 Title.BackgroundTransparency = 1
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 28
+Title.TextSize = 36
 Title.Parent = MainFrame
 
--- Avatar Image with rounded corners
+-- Avatar Image
 local Avatar = Instance.new("ImageLabel")
-Avatar.Size = UDim2.new(0, 100, 0, 100)
-Avatar.Position = UDim2.new(0, 20, 0, 70)
+Avatar.Size = UDim2.new(0, 120, 0, 120)
+Avatar.Position = UDim2.new(0, 20, 0, 80)
 Avatar.BackgroundTransparency = 1
 Avatar.BorderSizePixel = 0
 Avatar.Parent = MainFrame
 
 local UICornerAvatar = Instance.new("UICorner")
-UICornerAvatar.CornerRadius = UDim.new(0.5, 0) -- Fully rounded
+UICornerAvatar.CornerRadius = UDim.new(0.5, 0)
 UICornerAvatar.Parent = Avatar
 
 local thumbType = Enum.ThumbnailType.HeadShot
@@ -48,21 +62,32 @@ local thumbSize = Enum.ThumbnailSize.Size100x100
 local content, isReady = Players:GetUserThumbnailAsync(LocalPlayer.UserId, thumbType, thumbSize)
 Avatar.Image = content
 
--- Toggle Switch Button and Label
-local ToggleLabel = Instance.new("TextLabel")
-ToggleLabel.Text = "Farm Crates"
-ToggleLabel.Size = UDim2.new(0, 200, 0, 30)
-ToggleLabel.Position = UDim2.new(0, 20, 0, 190)
-ToggleLabel.BackgroundTransparency = 1
-ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleLabel.Font = Enum.Font.Gotham
-ToggleLabel.TextSize = 20
-ToggleLabel.Parent = MainFrame
+-- Section Headers
+local SectionHeader1 = Instance.new("TextLabel")
+SectionHeader1.Text = "Farm Crates"
+SectionHeader1.Size = UDim2.new(0, 200, 0, 40)
+SectionHeader1.Position = UDim2.new(0, 160, 0, 120)
+SectionHeader1.BackgroundTransparency = 1
+SectionHeader1.TextColor3 = Color3.fromRGB(255, 255, 255)
+SectionHeader1.Font = Enum.Font.Gotham
+SectionHeader1.TextSize = 24
+SectionHeader1.Parent = MainFrame
 
+local SectionHeader2 = Instance.new("TextLabel")
+SectionHeader2.Text = "Auto Collector"
+SectionHeader2.Size = UDim2.new(0, 200, 0, 40)
+SectionHeader2.Position = UDim2.new(0, 160, 0, 180)
+SectionHeader2.BackgroundTransparency = 1
+SectionHeader2.TextColor3 = Color3.fromRGB(255, 255, 255)
+SectionHeader2.Font = Enum.Font.Gotham
+SectionHeader2.TextSize = 24
+SectionHeader2.Parent = MainFrame
+
+-- Toggle Switch Button and Label
 local ToggleSwitchFrame = Instance.new("Frame")
 ToggleSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
-ToggleSwitchFrame.Position = UDim2.new(0, 220, 0, 190)
-ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ToggleSwitchFrame.Position = UDim2.new(0, 380, 0, 120)
+ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 ToggleSwitchFrame.BorderSizePixel = 0
 ToggleSwitchFrame.Parent = MainFrame
 
@@ -75,7 +100,6 @@ ToggleSwitchButton.Text = ""
 ToggleSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
 ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
 ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-ToggleSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleSwitchButton.BorderSizePixel = 0
 ToggleSwitchButton.Parent = ToggleSwitchFrame
 
@@ -84,20 +108,10 @@ UICornerToggleButton.CornerRadius = UDim.new(0, 15)
 UICornerToggleButton.Parent = ToggleSwitchButton
 
 -- Auto Collector Switch and Label
-local AutoCollectLabel = Instance.new("TextLabel")
-AutoCollectLabel.Text = "Auto Collector"
-AutoCollectLabel.Size = UDim2.new(0, 200, 0, 30)
-AutoCollectLabel.Position = UDim2.new(0, 20, 0, 230)
-AutoCollectLabel.BackgroundTransparency = 1
-AutoCollectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-AutoCollectLabel.Font = Enum.Font.Gotham
-AutoCollectLabel.TextSize = 20
-AutoCollectLabel.Parent = MainFrame
-
 local AutoCollectSwitchFrame = Instance.new("Frame")
 AutoCollectSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
-AutoCollectSwitchFrame.Position = UDim2.new(0, 220, 0, 230)
-AutoCollectSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+AutoCollectSwitchFrame.Position = UDim2.new(0, 380, 0, 180)
+AutoCollectSwitchFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 AutoCollectSwitchFrame.BorderSizePixel = 0
 AutoCollectSwitchFrame.Parent = MainFrame
 
@@ -110,7 +124,6 @@ AutoCollectSwitchButton.Text = ""
 AutoCollectSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
 AutoCollectSwitchButton.Position = UDim2.new(0, 2, 0, 2)
 AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-AutoCollectSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoCollectSwitchButton.BorderSizePixel = 0
 AutoCollectSwitchButton.Parent = AutoCollectSwitchFrame
 
@@ -118,110 +131,115 @@ local UICornerAutoCollectButton = Instance.new("UICorner")
 UICornerAutoCollectButton.CornerRadius = UDim.new(0, 15)
 UICornerAutoCollectButton.Parent = AutoCollectSwitchButton
 
--- Exit Button
-local ExitButton = Instance.new("TextButton")
-ExitButton.Text = "X"
-ExitButton.Size = UDim2.new(0, 30, 0, 30)
-ExitButton.Position = UDim2.new(1, -35, 0, 5)
-ExitButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-ExitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ExitButton.Font = Enum.Font.GothamBold
-ExitButton.TextSize = 18
-ExitButton.BorderSizePixel = 0
-ExitButton.Parent = MainFrame
+-- Credits Button
+local CreditsButton = Instance.new("TextButton")
+CreditsButton.Text = "Credits"
+CreditsButton.Size = UDim2.new(0, 100, 0, 40)
+CreditsButton.Position = UDim2.new(0, 200, 0, 400)
+CreditsButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+CreditsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditsButton.Font = Enum.Font.GothamBold
+CreditsButton.TextSize = 18
+CreditsButton.BorderSizePixel = 0
+CreditsButton.Parent = MainFrame
 
-local UICornerExitButton = Instance.new("UICorner")
-UICornerExitButton.CornerRadius = UDim.new(0, 10)
-UICornerExitButton.Parent = ExitButton
+local UICornerCreditsButton = Instance.new("UICorner")
+UICornerCreditsButton.CornerRadius = UDim.new(0, 10)
+UICornerCreditsButton.Parent = CreditsButton
 
-local toggleOn = false
-local autoCollectOn = false
+-- Credits Frame
+local CreditsFrame = Instance.new("Frame")
+CreditsFrame.Size = UDim2.new(0, 400, 0, 200)
+CreditsFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+CreditsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+CreditsFrame.Visible = false
+CreditsFrame.Parent = ScreenGui
 
-local function teleportToLootBoxes()
-    if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return end
-    local LootsFolder = Workspace:FindFirstChild("Loots")
-    if not LootsFolder then return end
-    for _, lootBox in ipairs(LootsFolder:GetChildren()) do
-        if lootBox.Name == "CashLootBox" and lootBox:IsA("Model") and lootBox.PrimaryPart then
-            lootBox:SetPrimaryPartCFrame(LocalPlayer.Character.HumanoidRootPart.CFrame)
-        end
-    end
-end
+local UICornerCreditsFrame = Instance.new("UICorner")
+UICornerCreditsFrame.CornerRadius = UDim.new(0, 15)
+UICornerCreditsFrame.Parent = CreditsFrame
 
-local function touchCashCollector()
-    if not Workspace:FindFirstChild("CashZone") then return end
-    local CashZone = Workspace.CashZone
-    for _, collector in ipairs(CashZone:GetDescendants()) do
-        if collector.Name == "CashCollector" and collector:IsA("BasePart") then
-            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, collector, 0)
-            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, collector, 1)
-        end
-    end
-end
+local CreditsLabel = Instance.new("TextLabel")
+CreditsLabel.Text = "Script made by:\nOwner: Jimmy\nCo-Owner: Glassrat"
+CreditsLabel.Size = UDim2.new(1, -20, 1, -20)
+CreditsLabel.Position = UDim2.new(0, 10, 0, 10)
+CreditsLabel.BackgroundTransparency = 1
+CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+CreditsLabel.Font = Enum.Font.Gotham
+CreditsLabel.TextSize = 24
+CreditsLabel.TextWrapped = true
+CreditsLabel.Parent = CreditsFrame
 
-local function toggleSwitch()
-    toggleOn = not toggleOn
-    if toggleOn then
-        ToggleSwitchButton.Position = UDim2.new(0.5, 2, 0, 2)
-        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        while toggleOn do
-            teleportToLootBoxes()
-            wait(1) -- Adjust the time interval as needed
-        end
+-- Notification Frame
+local NotificationFrame = Instance.new("Frame")
+NotificationFrame.Size = UDim2.new(0, 300, 0, 100)
+NotificationFrame.Position = UDim2.new(1, -300, 1, -100)
+NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NotificationFrame.BorderSizePixel = 0
+NotificationFrame.Visible = false
+NotificationFrame.Parent = ScreenGui
+
+local UICornerNotificationFrame = Instance.new("UICorner")
+UICornerNotificationFrame.CornerRadius = UDim.new(0, 10)
+UICornerNotificationFrame.Parent = NotificationFrame
+
+local NotificationLabel = Instance.new("TextLabel")
+NotificationLabel.Text = ""
+NotificationLabel.Size = UDim2.new(1, -20, 1, -20)
+NotificationLabel.Position = UDim2.new(0, 10, 0, 10)
+NotificationLabel.BackgroundTransparency = 1
+NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+NotificationLabel.Font = Enum.Font.Gotham
+NotificationLabel.TextSize = 20
+NotificationLabel.TextWrapped = true
+NotificationLabel.Parent = NotificationFrame
+
+local NotificationSound = Instance.new("Sound")
+NotificationSound.SoundId = notificationSoundId
+NotificationSound.Parent = NotificationFrame
+
+-- Function to check group membership
+local function checkGroupMembership()
+    local player = LocalPlayer
+    local isInGroup = player.MembershipType == Enum.MembershipType.Premium and player:GetRankInGroup(groupId) > 0
+
+    if not isInGroup then
+        -- Display notification
+        NotificationLabel.Text = "You must join the group to play this game."
+        NotificationFrame.Visible = true
+        NotificationSound:Play()
+
+        -- Wait for a few seconds before kicking
+        wait(5) -- Adjust wait time as needed
+
+        -- Kick player
+        player:Kick("You must join the group to play this game. Visit " .. groupLink .. " to join.")
     else
-        ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+        -- Hide the notification if the player is in the group
+        NotificationFrame.Visible = false
+    end
+end
+
+-- Call the function to check group membership
+checkGroupMembership()
+
+-- Toggle Button Functionality
+ToggleSwitchButton.MouseButton1Click:Connect(function()
+    if ToggleSwitchButton.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
+        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    else
         ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
-end
+end)
 
-local function toggleAutoCollect()
-    autoCollectOn = not autoCollectOn
-    if autoCollectOn then
-        AutoCollectSwitchButton.Position = UDim2.new(0.5, 2, 0, 2)
+AutoCollectSwitchButton.MouseButton1Click:Connect(function()
+    if AutoCollectSwitchButton.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
         AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        while autoCollectOn do
-            touchCashCollector()
-            wait(1) -- Adjust the time interval as needed
-        end
     else
-        AutoCollectSwitchButton.Position = UDim2.new(0, 2, 0, 2)
         AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
-end
-
-ToggleSwitchButton.MouseButton1Click:Connect(toggleSwitch)
-AutoCollectSwitchButton.MouseButton1Click:Connect(toggleAutoCollect)
-
-ExitButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
 end)
 
--- Enable dragging of the main UI
-local dragging = false
-local dragStart
-local startPos
-
-local function updateInput(input)
-    local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-MainFrame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        UserInputService.InputChanged:Connect(updateInput)
-    end
+CreditsButton.MouseButton1Click:Connect(function()
+    CreditsFrame.Visible = not CreditsFrame.Visible
 end)
