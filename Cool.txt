@@ -6,10 +6,10 @@ local UserInputService = game:GetService("UserInputService")
 
 -- Create ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "CustomHub"
+ScreenGui.Name = "BasementStudiosHub"
 ScreenGui.Parent = PlayerGui
 
--- Create Main Frame
+-- Create Main Frame with rounded corners and a sleek look
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 450, 0, 400)
 MainFrame.Position = UDim2.new(0.5, -225, 0.5, -200)
@@ -21,9 +21,9 @@ local UICornerMain = Instance.new("UICorner")
 UICornerMain.CornerRadius = UDim.new(0, 15)
 UICornerMain.Parent = MainFrame
 
--- Title
+-- Title with a stylish font
 local Title = Instance.new("TextLabel")
-Title.Text = "Custom Hub"
+Title.Text = "Basement Studios"
 Title.Size = UDim2.new(1, 0, 0, 50)
 Title.BackgroundTransparency = 1
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -31,7 +31,7 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 28
 Title.Parent = MainFrame
 
--- Avatar Image
+-- Avatar Image with rounded corners
 local Avatar = Instance.new("ImageLabel")
 Avatar.Size = UDim2.new(0, 100, 0, 100)
 Avatar.Position = UDim2.new(0, 20, 0, 70)
@@ -40,7 +40,7 @@ Avatar.BorderSizePixel = 0
 Avatar.Parent = MainFrame
 
 local UICornerAvatar = Instance.new("UICorner")
-UICornerAvatar.CornerRadius = UDim.new(0.5, 0)
+UICornerAvatar.CornerRadius = UDim.new(0.5, 0) -- Fully rounded
 UICornerAvatar.Parent = Avatar
 
 local thumbType = Enum.ThumbnailType.HeadShot
@@ -48,47 +48,75 @@ local thumbSize = Enum.ThumbnailSize.Size100x100
 local content, isReady = Players:GetUserThumbnailAsync(LocalPlayer.UserId, thumbType, thumbSize)
 Avatar.Image = content
 
--- Toggle Switch and Auto Collector
-local function createToggle(labelText, position)
-    local ToggleLabel = Instance.new("TextLabel")
-    ToggleLabel.Text = labelText
-    ToggleLabel.Size = UDim2.new(0, 200, 0, 30)
-    ToggleLabel.Position = position
-    ToggleLabel.BackgroundTransparency = 1
-    ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleLabel.Font = Enum.Font.Gotham
-    ToggleLabel.TextSize = 20
-    ToggleLabel.Parent = MainFrame
+-- Toggle Switch Button and Label
+local ToggleLabel = Instance.new("TextLabel")
+ToggleLabel.Text = "Farm Crates"
+ToggleLabel.Size = UDim2.new(0, 200, 0, 30)
+ToggleLabel.Position = UDim2.new(0, 20, 0, 190)
+ToggleLabel.BackgroundTransparency = 1
+ToggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleLabel.Font = Enum.Font.Gotham
+ToggleLabel.TextSize = 20
+ToggleLabel.Parent = MainFrame
 
-    local ToggleSwitchFrame = Instance.new("Frame")
-    ToggleSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
-    ToggleSwitchFrame.Position = UDim2.new(0, 220, 0, position.Y.Offset)
-    ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-    ToggleSwitchFrame.BorderSizePixel = 0
-    ToggleSwitchFrame.Parent = MainFrame
+local ToggleSwitchFrame = Instance.new("Frame")
+ToggleSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
+ToggleSwitchFrame.Position = UDim2.new(0, 220, 0, 190)
+ToggleSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ToggleSwitchFrame.BorderSizePixel = 0
+ToggleSwitchFrame.Parent = MainFrame
 
-    local UICornerToggleFrame = Instance.new("UICorner")
-    UICornerToggleFrame.CornerRadius = UDim.new(0, 15)
-    UICornerToggleFrame.Parent = ToggleSwitchFrame
+local UICornerToggleFrame = Instance.new("UICorner")
+UICornerToggleFrame.CornerRadius = UDim.new(0, 15)
+UICornerToggleFrame.Parent = ToggleSwitchFrame
 
-    local ToggleSwitchButton = Instance.new("TextButton")
-    ToggleSwitchButton.Text = ""
-    ToggleSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
-    ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
-    ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    ToggleSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ToggleSwitchButton.BorderSizePixel = 0
-    ToggleSwitchButton.Parent = ToggleSwitchFrame
+local ToggleSwitchButton = Instance.new("TextButton")
+ToggleSwitchButton.Text = ""
+ToggleSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
+ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+ToggleSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleSwitchButton.BorderSizePixel = 0
+ToggleSwitchButton.Parent = ToggleSwitchFrame
 
-    local UICornerToggleButton = Instance.new("UICorner")
-    UICornerToggleButton.CornerRadius = UDim.new(0, 15)
-    UICornerToggleButton.Parent = ToggleSwitchButton
+local UICornerToggleButton = Instance.new("UICorner")
+UICornerToggleButton.CornerRadius = UDim.new(0, 15)
+UICornerToggleButton.Parent = ToggleSwitchButton
 
-    return ToggleSwitchButton
-end
+-- Auto Collector Switch and Label
+local AutoCollectLabel = Instance.new("TextLabel")
+AutoCollectLabel.Text = "Auto Collector"
+AutoCollectLabel.Size = UDim2.new(0, 200, 0, 30)
+AutoCollectLabel.Position = UDim2.new(0, 20, 0, 230)
+AutoCollectLabel.BackgroundTransparency = 1
+AutoCollectLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoCollectLabel.Font = Enum.Font.Gotham
+AutoCollectLabel.TextSize = 20
+AutoCollectLabel.Parent = MainFrame
 
-local FarmCratesToggle = createToggle("Farm Crates", UDim2.new(0, 20, 0, 190))
-local AutoCollectToggle = createToggle("Auto Collector", UDim2.new(0, 20, 0, 230))
+local AutoCollectSwitchFrame = Instance.new("Frame")
+AutoCollectSwitchFrame.Size = UDim2.new(0, 60, 0, 30)
+AutoCollectSwitchFrame.Position = UDim2.new(0, 220, 0, 230)
+AutoCollectSwitchFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+AutoCollectSwitchFrame.BorderSizePixel = 0
+AutoCollectSwitchFrame.Parent = MainFrame
+
+local UICornerAutoCollectFrame = Instance.new("UICorner")
+UICornerAutoCollectFrame.CornerRadius = UDim.new(0, 15)
+UICornerAutoCollectFrame.Parent = AutoCollectSwitchFrame
+
+local AutoCollectSwitchButton = Instance.new("TextButton")
+AutoCollectSwitchButton.Text = ""
+AutoCollectSwitchButton.Size = UDim2.new(0.5, -2, 1, -4)
+AutoCollectSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+AutoCollectSwitchButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+AutoCollectSwitchButton.BorderSizePixel = 0
+AutoCollectSwitchButton.Parent = AutoCollectSwitchFrame
+
+local UICornerAutoCollectButton = Instance.new("UICorner")
+UICornerAutoCollectButton.CornerRadius = UDim.new(0, 15)
+UICornerAutoCollectButton.Parent = AutoCollectSwitchButton
 
 -- Exit Button
 local ExitButton = Instance.new("TextButton")
@@ -106,7 +134,6 @@ local UICornerExitButton = Instance.new("UICorner")
 UICornerExitButton.CornerRadius = UDim.new(0, 10)
 UICornerExitButton.Parent = ExitButton
 
--- Script functionality
 local toggleOn = false
 local autoCollectOn = false
 
@@ -132,37 +159,38 @@ local function touchCashCollector()
     end
 end
 
-local function toggleSwitch(button, state)
-    state = not state
-    if state then
-        button.Position = UDim2.new(0.5, 2, 0, 2)
-        button.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-    else
-        button.Position = UDim2.new(0, 2, 0, 2)
-        button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    end
-    return state
-end
-
-FarmCratesToggle.MouseButton1Click:Connect(function()
-    toggleOn = toggleSwitch(FarmCratesToggle, toggleOn)
+local function toggleSwitch()
+    toggleOn = not toggleOn
     if toggleOn then
+        ToggleSwitchButton.Position = UDim2.new(0.5, 2, 0, 2)
+        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         while toggleOn do
             teleportToLootBoxes()
-            wait(1)
+            wait(1) -- Adjust the time interval as needed
         end
+    else
+        ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
-end)
+end
 
-AutoCollectToggle.MouseButton1Click:Connect(function()
-    autoCollectOn = toggleSwitch(AutoCollectToggle, autoCollectOn)
+local function toggleAutoCollect()
+    autoCollectOn = not autoCollectOn
     if autoCollectOn then
+        AutoCollectSwitchButton.Position = UDim2.new(0.5, 2, 0, 2)
+        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         while autoCollectOn do
             touchCashCollector()
-            wait(1)
+            wait(1) -- Adjust the time interval as needed
         end
+    else
+        AutoCollectSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     end
-end)
+end
+
+ToggleSwitchButton.MouseButton1Click:Connect(toggleSwitch)
+AutoCollectSwitchButton.MouseButton1Click:Connect(toggleAutoCollect)
 
 ExitButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
