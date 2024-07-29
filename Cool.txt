@@ -1,22 +1,21 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local TweenService = game:GetService("TweenService")
-local SoundService = game:GetService("SoundService")
-local groupId = 34701815 -- Your group ID
-local groupLink = "https://www.roblox.com/groups/34701815/Basement-Studios-V2#!/about" -- Your group link
-local notificationSoundId = "rbxassetid://3398620867" -- Your sound ID
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local GroupId = 12345678  -- Replace with your group ID
+local RoleId = 98765432    -- Replace with the role ID that should grant the feature
 
 -- Create ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "BasementStudiosHub"
 ScreenGui.Parent = PlayerGui
 
--- Create Main Frame with a sleek look
+-- Create Main Frame with rounded corners and a sleek look
 local MainFrame = Instance.new("Frame")
 MainFrame.Size = UDim2.new(0, 450, 0, 400)
 MainFrame.Position = UDim2.new(0.5, -225, 0.5, -200)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Dark background
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 MainFrame.BorderSizePixel = 0
 MainFrame.Parent = ScreenGui
 
@@ -121,142 +120,78 @@ local UICornerAutoCollectButton = Instance.new("UICorner")
 UICornerAutoCollectButton.CornerRadius = UDim.new(0, 15)
 UICornerAutoCollectButton.Parent = AutoCollectSwitchButton
 
--- Credits Button and Frame
-local CreditsButton = Instance.new("TextButton")
-CreditsButton.Text = "Credits"
-CreditsButton.Size = UDim2.new(0, 100, 0, 40)
-CreditsButton.Position = UDim2.new(0.5, -50, 1, -50)
-CreditsButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-CreditsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditsButton.Font = Enum.Font.Gotham
-CreditsButton.TextSize = 18
-CreditsButton.BorderSizePixel = 0
-CreditsButton.Parent = MainFrame
+-- Exit Button
+local ExitButton = Instance.new("TextButton")
+ExitButton.Text = "X"
+ExitButton.Size = UDim2.new(0, 30, 0, 30)
+ExitButton.Position = UDim2.new(1, -35, 0, 5)
+ExitButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+ExitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitButton.Font = Enum.Font.GothamBold
+ExitButton.TextSize = 18
+ExitButton.BorderSizePixel = 0
+ExitButton.Parent = MainFrame
 
-local UICornerCreditsButton = Instance.new("UICorner")
-UICornerCreditsButton.CornerRadius = UDim.new(0, 10)
-UICornerCreditsButton.Parent = CreditsButton
+local UICornerExitButton = Instance.new("UICorner")
+UICornerExitButton.CornerRadius = UDim.new(0, 10)
+UICornerExitButton.Parent = ExitButton
 
-local CreditsFrame = Instance.new("Frame")
-CreditsFrame.Size = UDim2.new(0, 200, 0, 100)
-CreditsFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
-CreditsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Dark background
-CreditsFrame.Visible = false
-CreditsFrame.Parent = ScreenGui
+-- Auto Buy Feature Variables
+local autoBuyOn = false
 
-local UICornerCreditsFrame = Instance.new("UICorner")
-UICornerCreditsFrame.CornerRadius = UDim.new(0, 15)
-UICornerCreditsFrame.Parent = CreditsFrame
-
-local CreditsLabel = Instance.new("TextLabel")
-CreditsLabel.Text = "Owner: Jimmy\nCo-Owner: Glassrat"
-CreditsLabel.Size = UDim2.new(1, 0, 1, 0)
-CreditsLabel.BackgroundTransparency = 1
-CreditsLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-CreditsLabel.Font = Enum.Font.Gotham
-CreditsLabel.TextSize = 18
-CreditsLabel.TextWrapped = true
-CreditsLabel.TextYAlignment = Enum.TextYAlignment.Top
-CreditsLabel.Parent = CreditsFrame
-
--- Notification Frame
-local NotificationFrame = Instance.new("Frame")
-NotificationFrame.Size = UDim2.new(0, 300, 0, 100)
-NotificationFrame.Position = UDim2.new(1, 100, 1, -100)
-NotificationFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-NotificationFrame.BorderSizePixel = 0
-NotificationFrame.Visible = false
-NotificationFrame.Parent = ScreenGui
-
-local UICornerNotificationFrame = Instance.new("UICorner")
-UICornerNotificationFrame.CornerRadius = UDim.new(0, 15)
-UICornerNotificationFrame.Parent = NotificationFrame
-
-local NotificationLabel = Instance.new("TextLabel")
-NotificationLabel.Text = ""
-NotificationLabel.Size = UDim2.new(1, 0, 0.7, 0)
-NotificationLabel.Position = UDim2.new(0, 0, 0, 0)
-NotificationLabel.BackgroundTransparency = 1
-NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-NotificationLabel.Font = Enum.Font.GothamBold
-NotificationLabel.TextSize = 20
-NotificationLabel.TextWrapped = true
-NotificationLabel.TextYAlignment = Enum.TextYAlignment.Top
-NotificationLabel.Parent = NotificationFrame
-
-local NotificationButton = Instance.new("TextButton")
-NotificationButton.Text = "Copy Link"
-NotificationButton.Size = UDim2.new(1, 0, 0.3, 0)
-NotificationButton.Position = UDim2.new(0, 0, 0.7, 0)
-NotificationButton.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-NotificationButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-NotificationButton.Font = Enum.Font.GothamBold
-NotificationButton.TextSize = 18
-NotificationButton.Parent = NotificationFrame
-
--- Function to show notification
-local function showNotification()
-    NotificationLabel.Text = "Join Our Roblox Group for more scripts!"
-    NotificationFrame.Visible = true
-    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-    local goalIn = {Position = UDim2.new(0.5, -150, 1, -150)}
-    local tweenIn = TweenService:Create(NotificationFrame, tweenInfo, goalIn)
-    tweenIn:Play()
-
-    wait(5) -- Show for 5 seconds
-
-    local goalOut = {Position = UDim2.new(1, 100, 1, -100)}
-    local tweenOut = TweenService:Create(NotificationFrame, tweenInfo, goalOut)
-    tweenOut:Play()
-
-    tweenOut.Completed:Connect(function()
-        NotificationFrame.Visible = false
-    end)
-end
-
--- Function to copy link to clipboard
-local function copyToClipboard(text)
-    local clipboard = Instance.new("StringValue")
-    clipboard.Name = "Clipboard"
-    clipboard.Value = text
-    clipboard.Parent = PlayerGui
-    clipboard:Destroy()
-end
-
-NotificationButton.MouseButton1Click:Connect(function()
-    copyToClipboard(groupLink)
-end)
-
--- Play notification sound every 10 minutes
-local function playNotificationSound()
-    local sound = Instance.new("Sound")
-    sound.SoundId = notificationSoundId
-    sound.Parent = SoundService
-    sound:Play()
-end
-
--- Check if player is in group
 local function checkGroupMembership()
-    local success, isInGroup = pcall(function()
-        return LocalPlayer.MembershipType == Enum.MembershipType.Premium or LocalPlayer:HasGroup(groupId)
-    end)
+    local groupRank = LocalPlayer:GetRankInGroup(GroupId)
+    return groupRank >= RoleId
+end
 
-    if not success or not isInGroup then
-        LocalPlayer:Kick("Join the group to use this script: " .. groupLink)
+local function autoBuyButtons()
+    -- This function should iterate through all the buttons in the tycoon and simulate clicking them
+    -- Replace this placeholder with the actual implementation based on your tycoon's button structure
+    local ButtonsFolder = Workspace:FindFirstChild("Buttons") -- Replace with actual path to buttons
+    if not ButtonsFolder then return end
+    for _, button in ipairs(ButtonsFolder:GetChildren()) do
+        if button:IsA("BasePart") then
+            -- Simulate clicking the button
+            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, button, 0)
+            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, button, 1)
+        end
     end
 end
 
--- Show notification every 10 minutes
-while true do
-    playNotificationSound()
-    showNotification()
-    wait(600) -- 10 minutes
+local function toggleAutoBuy()
+    autoBuyOn = not autoBuyOn
+    if autoBuyOn then
+        ToggleSwitchButton.Position = UDim2.new(0.5, 2, 0, 2)
+        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        if checkGroupMembership() then
+            while autoBuyOn do
+                autoBuyButtons()
+                wait(1) -- Adjust the time interval as needed
+            end
+        end
+    else
+        ToggleSwitchButton.Position = UDim2.new(0, 2, 0, 2)
+        ToggleSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
 end
 
--- Show credits frame on button click
-CreditsButton.MouseButton1Click:Connect(function()
-    CreditsFrame.Visible = not CreditsFrame.Visible
+local function toggleAutoCollect()
+    if AutoCollectSwitchButton.BackgroundColor3 == Color3.fromRGB(255, 0, 0) then
+        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    else
+        AutoCollectSwitchButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+end
+
+-- Button Functionality
+ToggleSwitchButton.MouseButton1Click:Connect(function()
+    toggleAutoBuy()
 end)
 
--- Check group membership
-checkGroupMembership()
+AutoCollectSwitchButton.MouseButton1Click:Connect(function()
+    toggleAutoCollect()
+end)
+
+ExitButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
